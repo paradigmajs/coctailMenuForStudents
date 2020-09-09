@@ -1,18 +1,19 @@
 import React, {useState, useEffect} from 'react'
 import All from './All'
+import { bindActionCreators } from 'redux'
+import {connect} from 'react-redux'
+import {fetchCoctail} from './actions'
 
-function App  () {
+function App  (props) {
 
   const [data,setData] = useState(null)
-
+  
   useEffect(() => {
     go()
   }, [])
   
-  const go = async ()=>{
-    let resp = await fetch('https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail')
-    let data = await resp.json()
-    setData(data.drinks)
+  const go = ()=>{
+   props.fetchCoctail()
   }
   const search=(val)=>{
     let name = val
@@ -24,7 +25,7 @@ function App  () {
     }else{
       go()
     }
-  }
+  }       
 
   const find = async (name, url)=>{
     let resp  = await fetch (url+name)
@@ -41,10 +42,10 @@ function App  () {
     else{
       go()
     }
-
   }
+  const coc = props.coctails[0]
     return (
-     
+      
       <div>
         <h1>Coctails</h1>
 
@@ -63,10 +64,10 @@ function App  () {
           <option value="Non_Alcoholic">NON-ALC</option>
           <option value="Alcoholic">ALC</option>
         </select>
-        {data ? 
-          data.map(elem=>{
+        {coc ? 
+          coc.map(elem=>{
             return (
-              <All coctail = {elem}/>
+              <All coctail={elem} key={elem.name}/>
             )
           }):null
         }
@@ -74,4 +75,12 @@ function App  () {
     )
   
 }
-export default App
+function mapDispatchToProps (dispath){
+  return bindActionCreators({fetchCoctail}, dispath)
+}
+
+function mapStateToProps({coctails}){
+  return {coctails}
+}
+
+export default connect (mapStateToProps, mapDispatchToProps)(App)

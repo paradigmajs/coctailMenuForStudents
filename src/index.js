@@ -5,20 +5,27 @@ import App from './App';
 import Coctail from './Coctail'
 import * as serviceWorker from './serviceWorker';
 import {Router, Route} from 'react-router'
-import createBrowserHistory from 'history/createBrowserHistory'
+import * as createHistory from "history";
+
 import Ingridient from './Ingridient';
 
-const history = createBrowserHistory()
+import {Provider} from 'react-redux'
+import {createStore, applyMiddleware} from 'redux'
+import ReduxPromise from 'redux-promise'
+import reducers from './reducers/index'
 
+const history = createHistory.createBrowserHistory();
+
+const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore)
 ReactDOM.render(
-  <React.StrictMode>
+ 
+  <Provider store={createStoreWithMiddleware(reducers)}>
     <Router history={history}>
         <Route path = '/' component={App} exact/>
         <Route path = '/coctail/:name' component={Coctail}  exact/>
         <Route path = '/ingridient/:ing' component={Ingridient}  exact/>
     </Router>
-   
-  </React.StrictMode>,
+    </Provider>,
   document.getElementById('root')
 );
 
