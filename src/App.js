@@ -4,40 +4,27 @@ import { bindActionCreators } from 'redux'
 import {connect} from 'react-redux'
 import {fetchCoctail} from './actions'
 
-function App  (props) {
 
-  const [data,setData] = useState(null)
-  
-  useEffect(() => {
+function App  (props) {
+    useEffect(() => {
     go()
   }, [])
-  
   const go = ()=>{
-   props.fetchCoctail()
+    props.fetchCoctail(null, 'getAll')
   }
   const search=(val)=>{
-    let name = val
-    let url = 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?a='
+    let name = val  
     if(name=== 'Non_Alcoholic'){
-      find(name, url)
+      props.fetchCoctail(name, 'fetchByAlc')
     }else if(name === 'Alcoholic'){
-      find(name, url)
+      props.fetchCoctail(name, 'fetchByAlc')
     }else{
       go()
     }
   }       
-
-  const find = async (name, url)=>{
-    let resp  = await fetch (url+name)
-    let data = await resp.json()
-    setData(data.drinks)
-  }
-
-  const filterByName= async (val)=>{
+  const filterByName= (val)=>{
     if(val !== ''){
-      let resp = await fetch("https://www.thecocktaildb.com/api/json/v1/1/search.php?s="+val)
-      let data = await resp.json()
-      setData(data.drinks)
+      props.fetchCoctail(val, 'filterByName')
     }
     else{
       go()
